@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Member Dashboard</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Segoe UI", sans-serif;
+            background: #30364F;
+            color: #E1D9BC;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1100px;
+            margin: 40px auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 32px;
+            color: #E1D9BC;
+            letter-spacing: 1px;
+        }
+
+        .table-card {
+            background: #ACBAC4;
+            border-radius: 18px;
+            padding: 25px;
+            box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.25);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+
+        th {
+            text-align: left;
+            padding: 14px;
+            background: #30364F;
+            color: #E1D9BC;
+            font-size: 15px;
+        }
+
+        td {
+            padding: 14px;
+            color: #30364F;
+            font-size: 15px;
+            font-weight: 500;
+            border-bottom: 1px solid rgba(48, 54, 79, 0.2);
+        }
+
+        tr:hover td {
+            background: rgba(225, 217, 188, 0.4);
+            transition: 0.3s;
+        }
+
+        /* Status Badge */
+        .badge {
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .borrowed {
+            background: #30364F;
+            color: #E1D9BC;
+        }
+
+        .overdue {
+            background: #D9534F;
+            color: white;
+        }
+
+        .returned {
+            background: #2E7D32;
+            color: white;
+        }
+
+        /* Fine badge */
+        .fine-paid {
+            background: #2E7D32;
+            color: white;
+        }
+
+        .fine-unpaid {
+            background: #D9534F;
+            color: white;
+        }
+
+        .no-fine {
+            background: #30364F;
+            color: #E1D9BC;
+        }
+
+        /* Responsive - Table to card layout on mobile */
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+                margin: 24px auto;
+                padding: 0 12px;
+            }
+            h1 {
+                font-size: 24px;
+            }
+            .table-card {
+                padding: 0;
+                overflow: visible;
+            }
+            table, thead, tbody, th, td, tr {
+                display: block;
+            }
+            thead tr {
+                position: absolute;
+                top: -9999px;
+                left: -9999px;
+            }
+            tr {
+                margin-bottom: 16px;
+                padding: 16px;
+                background: #fff;
+                border-radius: 12px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            }
+            tr:hover td {
+                background: transparent;
+            }
+            td {
+                padding: 8px 0;
+                border-bottom: 1px solid rgba(48,54,79,0.1);
+                font-size: 14px;
+            }
+            td:last-child {
+                border-bottom: none;
+            }
+            td:before {
+                content: attr(data-label);
+                font-weight: bold;
+                color: #30364F;
+                display: inline-block;
+                width: 120px;
+                margin-right: 8px;
+            }
+        }
+         .navbar {
+        width: 100%;
+        background:#ACBAC4;
+        padding: 15px 25px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-sizing: border-box;
+        box-shadow: 0px 6px 18px rgba(0,0,0,0.25);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+    }
+
+    .logo {
+        font-size: 22px;
+        font-weight: bold;
+        color: #30364F;
+        letter-spacing: 1px;
+    }
+
+    .nav-links {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+    }
+
+    .nav-btn {
+        text-decoration: none;
+        color: #ACBAC4;
+        background: #30364F;
+        padding: 10px 18px;
+        border-radius: 12px;
+        font-weight: 600;
+        transition: 0.3s;
+        box-shadow: 0px 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .nav-btn:hover {
+        background: #E1D9BC;
+        transform: translateY(-2px);
+        box-shadow: 0px 6px 18px rgba(0,0,0,0.3);
+    }
+
+    /* Responsive Navbar */
+    @media(max-width: 600px){
+        .navbar{
+            flex-direction: column;
+            gap: 10px;
+            text-align: center;
+            padding: 12px 16px;
+        }
+
+        .logo{
+            font-size: 18px;
+        }
+
+        .nav-btn{
+            width: 100%;
+            text-align: center;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .container {
+            width: 100%;
+            padding: 0 12px;
+        }
+        h1 {
+            font-size: 20px;
+        }
+    }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+    <div class="logo">
+        📚 Library System
+    </div>
+
+    <div class="nav-links">
+        {% if user.is_authenticated %}
+            <a href="{% url 'logout' %}" class="nav-btn">Logout</a>
+        {% else %}
+            <a href="{% url 'login' %}" class="nav-btn">Login</a>
+        {% endif %}
+    </div>
+</nav>
+    <div class="container">
+        <h1>📚 My Borrowed Books</h1>
+
+        <div class="table-card">
+            {% if borrowed_books %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Book Title</th>
+                        <th>Borrowed At</th>
+                        <th>Due Date</th>
+                        <th>Status</th>
+                        <th>Fine Amount</th>
+                        <th>Fine Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for book in borrowed_books %}
+                    <tr>
+                        <td data-label="Book Title">{{ book.title }}</td>
+                        <td data-label="Borrowed At">{{ book.borrowed_at }}</td>
+                        <td data-label="Due Date">{{ book.due_date }}</td>
+
+                        <td data-label="Status">
+                            {% if book.status == "Overdue" %}
+                                <span class="badge overdue">Overdue</span>
+                            {% elif book.status == "Borrowed" %}
+                                <span class="badge borrowed">Borrowed</span>
+                            {% else %}
+                                <span class="badge returned">{{ book.status }}</span>
+                            {% endif %}
+                        </td>
+
+                        <td data-label="Fine Amount">
+                            {% if book.fine_amount > 0 %}
+                                Rs. {{ book.fine_amount }}
+                            {% else %}
+                                ---
+                            {% endif %}
+                        </td>
+
+                        <td data-label="Fine Status">
+                            {% if book.fine_paid == "Paid" %}
+                                <span class="badge fine-paid">Paid</span>
+                            {% elif book.fine_paid == "Unpaid" %}
+                                <span class="badge fine-unpaid">Unpaid</span>
+                            {% else %}
+                                <span class="badge no-fine">No Fine</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            {% else %}
+                <p style="text-align:center; font-size:18px; color:#30364F; font-weight:bold;">
+                    No borrowed books found.
+                </p>
+            {% endif %}
+        </div>
+    </div>
+
+</body>
+</html>

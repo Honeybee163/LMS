@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block title %}All Books{% endblock %}
+
+{% block content %}
+
+<h1 style="color:#ACBAC4; margin-bottom:20px;">All Books</h1>
+
+<!-- Filter & Search Form -->
+<form method="GET" style="display:flex; flex-wrap:wrap; gap:15px; margin-bottom:25px; background:#ACBAC4; padding:20px; border-radius:14px; box-shadow: 0px 6px 20px rgba(0,0,0,0.15);">
+
+    <!-- CATEGORY DROPDOWN -->
+    <div style="flex:1; min-width:150px;">
+        <label style="color:#30364F; font-weight:600;">Category:</label>
+        <select name="category" onchange="this.form.submit()" style="width:100%; padding:10px; border-radius:10px; border:none; background:#E1D9BC; color:#30364F;">
+            <option value="">-- All Categories --</option>
+            {% for cat in categories %}
+                <option value="{{ cat.id }}" {% if category_filter == cat.id|stringformat:"s" %} selected {% endif %}>
+                    {{ cat.name }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <!-- AVAILABILITY DROPDOWN -->
+    <div style="flex:1; min-width:150px;">
+        <label style="color:#30364F; font-weight:600;">Availability:</label>
+        <select name="availability" onchange="this.form.submit()" style="width:100%; padding:10px; border-radius:10px; border:none; background:#E1D9BC; color:#30364F;">
+            <option value="">-- All --</option>
+            <option value="available" {% if availability == "available" %}selected{% endif %}>Available</option>
+            <option value="unavailable" {% if availability == "unavailable" %}selected{% endif %}>Borrowed</option>
+        </select>
+    </div>
+
+    <!-- AUTHOR DROPDOWN -->
+    <div style="flex:1; min-width:150px;">
+        <label style="color:#30364F; font-weight:600;">Author:</label>
+        <select name="author" onchange="this.form.submit()" style="width:100%; padding:10px; border-radius:10px; border:none; background:#E1D9BC; color:#30364F;">
+            <option value="">-- All Authors --</option>
+            {% for auth in author %}
+                <option value="{{ auth.id }}" {% if author_filter == auth.id|stringformat:"s" %} selected {% endif %}>
+                    {{ auth.name }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <!-- SEARCH BAR -->
+    <div style="flex:2; min-width:200px;">
+        <label style="color:#30364F; font-weight:600;">Search:</label>
+        <input type="text" name="q" value="{{ q }}" placeholder="Search by title, ISBN, or author" 
+               style="width:100%; padding:10px; border-radius:10px; border:none; background:#E1D9BC; color:#30364F;">
+    </div>
+
+    <div style="align-self:flex-end;">
+        <input type="submit" value="Search" 
+               style="padding:10px 20px; border:none; border-radius:10px; background:#30364F; color:#E1D9BC; font-weight:600; cursor:pointer; margin-top:10px;">
+    </div>
+
+</form>
+
+<hr style="margin-bottom:20px; border:1px solid #30364F;">
+
+<!-- Books List -->
+{% if books %}
+    <ul style="list-style:none; padding:0; display:flex; flex-direction:column; gap:12px;">
+        {% for book in page_obj %}
+            <li style="padding:15px; background:#ACBAC4; border-radius:12px; display:flex; justify-content:space-between; align-items:center; box-shadow: 0px 6px 20px rgba(0,0,0,0.15); transition:0.3s;">
+                <a href="#" style="font-weight:bold; color:#30364F; text-decoration:none; flex:1;">
+                    {{ book.book.title }}
+                </a>
+                <span style="font-weight:600; color:#30364F; min-width:120px; text-align:right;">
+                    {% if book.status == "available" %}
+                        <span style="color:green;">Available</span>
+                    {% else %}
+                        <span style="color:red;">Borrowed</span>
+                    {% endif %}
+                </span>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p style="color:#ACBAC4; font-weight:500;">No books found.</p>
+{% endif %}
+
+<!-- Pagination -->
+<div style="margin-top:20px; display:flex; justify-content:center; gap:10px; flex-wrap:wrap;">
+
+    {% if page_obj.has_previous %}
+        <a href="?page=1&category={{ category_filter }}&availability={{ availability }}&author={{ author_filter }}&q={{ q }}"
+           style="padding:8px 14px; background:#30364F; color:#E1D9BC; text-decoration:none; border-radius:8px;">
+            First
+        </a>
+
+        <a href="?page={{ page_obj.previous_page_number }}&category={{ category_filter }}&availability={{ availability }}&author={{ author_filter }}&q={{ q }}"
+           style="padding:8px 14px; background:#30364F; color:#E1D9BC; text-decoration:none; border-radius:8px;">
+            Prev
+        </a>
+    {% endif %}
+
+    <span style="padding:8px 14px; background:#ACBAC4; color:#30364F; border-radius:8px; font-weight:600;">
+        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+    </span>
+
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}&category={{ category_filter }}&availability={{ availability }}&author={{ author_filter }}&q={{ q }}"
+           style="padding:8px 14px; background:#30364F; color:#E1D9BC; text-decoration:none; border-radius:8px;">
+            Next
+        </a>
+
+        <a href="?page={{ page_obj.paginator.num_pages }}&category={{ category_filter }}&availability={{ availability }}&author={{ author_filter }}&q={{ q }}"
+           style="padding:8px 14px; background:#30364F; color:#E1D9BC; text-decoration:none; border-radius:8px;">
+            Last
+        </a>
+    {% endif %}
+
+</div>
+
+{% endblock %}

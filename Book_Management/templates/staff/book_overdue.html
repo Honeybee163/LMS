@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Book Overdue{% endblock %}
+
+{% block content %}
+
+<h1 style="color:#ACBAC4; margin-bottom:20px;">Overdue Books</h1>
+
+<!-- Search Form -->
+<form method="get" action="" style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:20px; background:#ACBAC4; padding:15px; border-radius:12px; box-shadow: 0px 6px 20px rgba(0,0,0,0.15);">
+    <input type="text" name="name" placeholder="Search member by username" value="{{ name }}" 
+           style="flex:1; min-width:200px; padding:10px; border-radius:10px; border:none; background:#E1D9BC; color:#30364F;">
+    <input type="submit" value="Search" 
+           style="padding:10px 20px; border-radius:10px; border:none; background:#30364F; color:#E1D9BC; font-weight:600; cursor:pointer;">
+</form>
+
+{% if books %}
+    <ul style="list-style:none; padding:0; display:flex; flex-direction:column; gap:12px;">
+        {% for book in books %}
+            <li style="background:#ACBAC4; padding:15px; border-radius:12px; display:flex; justify-content:space-between; align-items:center; box-shadow:0px 6px 20px rgba(0,0,0,0.15); transition:0.3s;">
+                
+                <!-- Book info -->
+                <div style="flex:1; color:#30364F; font-weight:500;">
+                    <strong>Title:</strong> {{ book.book_copy.book.title }} <br>
+                     <strong>Member:</strong> {{ book.member.user.username }} <br>
+                    <strong>Book:</strong> {{ book.book_copy.book.title }} <br>
+                    <strong>Borrowed At:</strong> {{ book.borrowed_at|date:"M d, Y" }} <br>
+                    <strong>Due Date:</strong> {{ book.due_date|date:"M d, Y" }}
+                    <span style="color:red; font-weight:bold;">(Overdue)</span>
+                </div>
+
+                <!-- Link to calculate days late -->
+                <div>
+                    <a href="{% url 'calculate_days_late' book.book_copy.book.title %}"
+                       style="padding:10px 16px; border-radius:10px; background:#30364F; color:#E1D9BC; font-weight:600; text-decoration:none; transition:0.3s;">
+                        Calculate Days Late
+                    </a>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p style="color:#ACBAC4; font-weight:500;">No books are overdue.</p>
+{% endif %}
+
+{% endblock %}

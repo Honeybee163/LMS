@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Segoe UI", sans-serif;
+            background: #30364F;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .register-container {
+            background: #ACBAC4;
+            width: 100%;
+            max-width: 720px;
+            padding: 40px;
+            margin-top: 50px;
+            border-radius: 20px;
+            box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.25);
+            border: 2px solid rgba(225, 217, 188, 0.7);
+            backdrop-filter: blur(8px);
+        }
+
+        .register-container h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #30364F;
+            font-size: 30px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        h3 {
+            margin-top: 20px;
+            margin-bottom: 12px;
+            color: #30364F;
+            font-size: 18px;
+            border-left: 5px solid #30364F;
+            padding-left: 10px;
+        }
+
+        form p {
+            margin-bottom: 18px;
+        }
+
+        label {
+            font-weight: 600;
+            color: #30364F;
+            display: block;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="email"] {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid transparent;
+            border-radius: 14px;
+            outline: none;
+            font-size: 15px;
+            transition: 0.3s;
+            background: #E1D9BC;
+            color: #30364F;
+            box-sizing: border-box;
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus,
+        input[type="email"]:focus {
+            border-color: #30364F;
+            box-shadow: 0px 0px 10px rgba(48, 54, 79, 0.5);
+            transform: scale(1.02);
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #30364F, #4C5875);
+            color: #E1D9BC;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 18px;
+            letter-spacing: 0.5px;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0px 8px 18px rgba(0, 0, 0, 0.25);
+            opacity: 0.95;
+        }
+
+        button:active {
+            transform: translateY(0px);
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #30364F;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            body {
+                padding: 20px;
+                align-items: flex-start;
+                padding-top: 24px;
+            }
+            .register-container {
+                padding: 28px 24px;
+                border-radius: 16px;
+                max-width: 100%;
+                margin-top: 0;
+            }
+            .register-container h2 {
+                font-size: 24px;
+            }
+            h3 {
+                font-size: 16px;
+            }
+            button {
+                font-size: 15px;
+            }
+        }
+        @media (max-width: 480px) {
+            body {
+                padding: 16px;
+            }
+            .register-container {
+                padding: 24px 20px;
+            }
+            .register-container h2 {
+                font-size: 22px;
+            }
+            input[type="text"],
+            input[type="password"],
+            input[type="email"] {
+                font-size: 16px; /* Prevents zoom on iOS */
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="register-container">
+        <h2>Create Account</h2>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <h3>User Info</h3>
+            {{ user_form.as_p }}
+
+            <h3>Profile Info</h3>
+            {{ profile_form.as_p }}
+
+            <button type="submit">Register</button>
+        </form>
+
+        <a class="back-link" href="{% url 'login' %}">← Back to Login</a>
+    </div>
+
+</body>
+</html>

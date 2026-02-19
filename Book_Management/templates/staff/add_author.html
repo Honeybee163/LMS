@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="categories-bar">
+    
+
+    {% for aut in authors %}
+        <p class="cat-btn">{{ aut.name }}</p>
+    {% endfor %}
+</div>
+
+<div class="center-wrapper">
+
+    <div class="form-container">
+        <h2 style="color:#30364F; text-align:center; margin-bottom:20px;">Add Author</h2>
+
+        <form action="" method="POST" style="display:flex; flex-direction:column; gap:15px;">
+            {% csrf_token %}
+            {{ form.as_p }}
+
+            <input type="submit" value="Submit" class="submit-btn">
+        </form>
+    </div>
+
+</div>
+
+<style>
+     .categories-bar{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    margin-bottom: 30px;
+
+    max-width: 900px;   /* controls wrapping */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Category button style */
+.cat-btn{
+    padding: 12px 25px;
+    border: 2px solid #C9B59C;
+    border-radius: 10px;
+    background: #ACBAC4;
+    color: #30364F;
+    font-weight: 600;
+    text-decoration: none;
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+/* Hover effect */
+.cat-btn:hover{
+    background:#30364F;
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* Active button (All selected style) */
+.cat-btn.active{
+    background: #5A5247;
+    color: white;
+    border-color: #5A5247;
+}
+/* Wrapper for centering */
+.center-wrapper{
+    width: 100%;
+    min-height: 100vh; /* full height */
+    display: flex;
+    justify-content: center; /* horizontal center */
+    align-items: center;     /* vertical center */
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.form-container{
+    width: 100%;
+    max-width: 700px;
+    padding: 30px;
+    border-radius: 20px;
+    background: #ACBAC4;
+    box-shadow: 0px 10px 25px rgba(0,0,0,0.25);
+    box-sizing: border-box;
+}
+
+/* make all inputs 100% width */
+form input, form select, form textarea{
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    background: #E1D9BC;
+    color: #30364F;
+    font-size: 15px;
+}
+
+/* focus effect */
+form input:focus, form select:focus, form textarea:focus{
+    outline: none;
+    border: 2px solid #30364F;
+    box-shadow: 0px 0px 8px rgba(48,54,79,0.5);
+}
+
+/* submit button */
+.submit-btn{
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    background:#30364F;
+    color:#E1D9BC;
+    font-weight:600;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.submit-btn:hover{
+    transform: translateY(-2px);
+    box-shadow: 0px 6px 15px rgba(0,0,0,0.3);
+}
+
+/* Responsive */
+@media(max-width:768px){
+    .center-wrapper {
+        padding: 20px 16px;
+        align-items: flex-start;
+        padding-top: 80px;
+    }
+    .form-container{
+        max-width: 100%;
+        padding: 24px;
+    }
+}
+@media(max-width:480px){
+    .center-wrapper {
+        padding: 16px 12px;
+        padding-top: 70px;
+    }
+    .form-container {
+        padding: 20px 16px;
+    }
+}
+</style>
+
+{% endblock %}

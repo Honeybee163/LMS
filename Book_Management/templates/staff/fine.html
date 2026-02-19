@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}Fine Calculator{% endblock %}
+
+{% block content %}
+
+<h1 style="color:#ACBAC4; margin-bottom:20px;">Fine Calculator</h1>
+{% if messages %}
+    <div style="margin-bottom:20px;">
+        {% for message in messages %}
+            <div style="padding:12px; border-radius:10px; margin-bottom:10px;
+                        background: {% if message.tags == 'success' %}#ACBAC4{% else %}#E1D9BC{% endif %};
+                        color:#30364F; font-weight:600;">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<div style="background:#ACBAC4; padding:25px; border-radius:14px; box-shadow:0px 6px 20px rgba(0,0,0,0.15); max-width:600px;">
+
+    <form action="" method="POST" style="display:flex; flex-direction:column; gap:15px;">
+        {% csrf_token %}
+        
+        {{ fine_form.as_p }}
+
+        <input type="submit" value="Submit"
+               style="padding:12px; border:none; border-radius:10px; background:#30364F; color:#E1D9BC;
+                      font-weight:600; cursor:pointer; transition:0.3s;">
+    </form>
+
+</div>
+
+<style>
+    /* Style Django form fields */
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    select,
+    textarea {
+        width: 100%;
+        padding: 10px;
+        border-radius: 10px;
+        border: none;
+        background: #E1D9BC;
+        color: #30364F;
+        font-size: 15px;
+        box-sizing: border-box;
+        outline: none;
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    input[type="date"]:focus,
+    select:focus,
+    textarea:focus {
+        border: 2px solid #30364F;
+        box-shadow: 0px 0px 8px rgba(48, 54, 79, 0.5);
+    }
+
+    label {
+        font-weight: 600;
+        color: #30364F;
+        display: block;
+        margin-bottom: 6px;
+    }
+
+    p {
+        margin: 0;
+    }
+
+    input[type="submit"]:hover {
+        transform: translateY(-2px);
+        box-shadow: 0px 8px 18px rgba(0,0,0,0.25);
+    }
+
+    @media (max-width: 640px) {
+        .main-content > div {
+            max-width: 100% !important;
+            padding: 20px 16px !important;
+        }
+    }
+</style>
+
+{% endblock %}

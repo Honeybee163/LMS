@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}Borrow Book{% endblock %}
+
+{% block content %}
+
+<h1 style="color:#ACBAC4; margin-bottom:20px; text-decoration:underline">Borrow Book</h1>
+
+{% if error %}
+      <h2 style='color:red'>{{error}}</h2>    
+{% endif %}
+    
+
+<!-- Search Form -->
+<form method="get" action="" style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:20px; background:#ACBAC4; padding:15px; border-radius:12px; box-shadow: 0px 6px 20px rgba(0,0,0,0.15);">
+    <input type="text" name="name" placeholder="Search member by username" value="{{ search_name }}" 
+           style="flex:1; min-width:200px; padding:10px; border-radius:10px; border:none; background:#E1D9BC; color:#30364F;">
+    <input type="submit" value="Search" 
+           style="padding:10px 20px; border-radius:10px; border:none; background:#30364F; color:#E1D9BC; font-weight:600; cursor:pointer;">
+</form>
+
+<!-- Borrow Form -->
+<form action="" method="post" style="background:#ACBAC4; padding:20px; border-radius:12px; box-shadow: 0px 6px 20px rgba(0,0,0,0.15); display:flex; flex-direction:column; gap:15px;">
+    {% csrf_token %}
+
+    <!-- Member Dropdown -->
+    <div style="display:flex; flex-direction:column;">
+        <label for="member" style="color:#30364F; font-weight:600; margin-bottom:5px;">Member:</label>
+        <select name="member" id="member" style="padding:10px; border-radius:10px; border:none; background:#E1D9BC; color:#30364F;">
+            <option value="">---------</option>
+            {% for member in members %}
+                <option value="{{ member.id }}" {% if member.user.username == search_name %}selected{% endif %}>
+                    {{ member.user.username }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <!-- Status Dropdown -->
+    <div style="display:flex; flex-direction:column;">
+        <label for="status" style="color:#30364F; font-weight:600; margin-bottom:5px;">Status:</label>
+        <select name="status" id="status" style="padding:10px; border-radius:10px; border:none; background:#E1D9BC; color:#30364F;">
+            <option value="">---------</option>
+            <option value="borrowed">Borrowed</option>
+            <option value="returned">Returned</option>
+        </select>
+    </div>
+
+    <!-- Submit Button -->
+    <input type="submit" value="Borrow Book" 
+           style="padding:12px; border-radius:10px; border:none; background:#30364F; color:#E1D9BC; font-weight:600; cursor:pointer; transition:0.3s;">
+</form>
+
+
+
+
+<style>
+@media (max-width: 580px) {
+    .main-content form[method="post"] {
+        padding: 16px !important;
+    }
+}
+</style>
+
+{% endblock %}

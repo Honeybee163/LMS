@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Library Dashboard{% endblock %}</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: "Segoe UI", sans-serif;
+            background: #ACBAC4;
+        }
+
+        /* Hamburger button - visible only on mobile */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            z-index: 1001;
+            background: #ACBAC4;
+            border: 2px solid #30364F;
+            color: #30364F;
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: 0.3s;
+        }
+        .menu-toggle:hover {
+            background: #30364F;
+            color: #E1D9BC;
+        }
+
+        /* Sidebar overlay for mobile */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .sidebar-overlay.active {
+            opacity: 1;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 220px;
+            max-width: 85vw;
+            background: #ACBAC4;
+            padding-top: 20px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.15);
+            transition: transform 0.3s ease-in-out;
+            z-index: 1000;
+            border-radius: 0 12px 12px 0;
+        }
+
+        .sidebar h2 {
+            color: #30364F;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 18px;
+            padding: 0 12px;
+        }
+
+        .sidebar a {
+            color: #30364F;
+            padding: 12px 20px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.3s;
+            border-radius: 8px;
+            margin: 4px 10px;
+        }
+
+        .sidebar a:hover, .sidebar a.active {
+            background: #30364F;
+            color: #E1D9BC;
+        }
+
+        /* Main content */
+        .main-content {
+            margin-left: 220px;
+            padding: 30px;
+            background: #30364F;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        /* Responsive - Tablet & Mobile */
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: flex;
+            }
+
+            .sidebar-overlay {
+                display: block;
+                pointer-events: none;
+            }
+            .sidebar-overlay.active {
+                pointer-events: auto;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 60px 16px 24px;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .sidebar-overlay {
+                display: none !important;
+            }
+        }
+
+        /* Responsive content for all dashboard pages */
+        @media (max-width: 768px) {
+            .main-content h1 {
+                font-size: 1.4rem;
+            }
+            .main-content form[method="GET"],
+            .main-content form[method="get"] {
+                flex-direction: column !important;
+            }
+            .main-content form[method="GET"] > div,
+            .main-content form[method="get"] > div {
+                min-width: 100% !important;
+            }
+            .main-content form input[type="submit"] {
+                width: 100%;
+                margin-top: 4px;
+            }
+        }
+        @media (max-width: 580px) {
+            .main-content ul li {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: 12px !important;
+            }
+            .main-content ul li a {
+                flex: none !important;
+            }
+            .main-content ul li span {
+                min-width: auto !important;
+                text-align: left !important;
+            }
+            .main-content ul li > div:last-child {
+                width: 100%;
+            }
+            .main-content ul li > div:last-child a {
+                display: inline-block;
+                padding: 10px 16px;
+            }
+        }
+        @media (max-width: 480px) {
+            .main-content h1 {
+                font-size: 1.25rem;
+            }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+    <!-- Hamburger menu button -->
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">☰</button>
+
+    <!-- Overlay when sidebar is open on mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <h2>Welcome {{ user.username }}</h2>
+        <a href="{% url 'librarian_dashboard' %}" class="{% if request.resolver_match.url_name == 'librarian_dashboard' %}active{% endif %}">All Books</a>
+        <a href="{% url 'available_books' %}" class="{% if request.resolver_match.url_name == 'available_books' %}active{% endif %}">Borrow Book</a>
+        <a href="{% url 'books_issued_by_members' %}" class="{% if request.resolver_match.url_name == 'books_issued_by_members' %}active{% endif %}">Books Issued by Members</a>
+        <a href="{% url 'book_overdue' %}" class="{% if request.resolver_match.url_name == 'book_overdue' %}active{% endif %}">Book Overdue</a>
+        <a href="{% url 'add_book' %}" class="{% if request.resolver_match.url_name == 'add_book' %}active{% endif %}">Add Book</a>
+        <a href="{% url 'add_category' %}" class="{% if request.resolver_match.url_name == 'add_category' %}active{% endif %}">Add Category</a>
+        <a href="{% url 'add_author' %}" class="{% if request.resolver_match.url_name == 'add_author' %}active{% endif %}">Add Author</a>
+        <a href="{% url 'add_copies' %}" class="{% if request.resolver_match.url_name == 'add_copies' %}active{% endif %}">Add Copies</a>
+        <a href="{% url 'logout' %}">Logout</a>
+    </div>
+
+    <!-- Main content -->
+    <div class="main-content">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <script>
+        (function() {
+            var toggle = document.getElementById('menuToggle');
+            var sidebar = document.getElementById('sidebar');
+            var overlay = document.getElementById('sidebarOverlay');
+            if (toggle && sidebar && overlay) {
+                function openMenu() {
+                    sidebar.classList.add('open');
+                    overlay.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                }
+                function closeMenu() {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+                toggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('open');
+                    overlay.classList.toggle('active');
+                    document.body.style.overflow = sidebar.classList.contains('open') ? 'hidden' : '';
+                });
+                overlay.addEventListener('click', closeMenu);
+            }
+        })();
+    </script>
+</body>
+</html>
