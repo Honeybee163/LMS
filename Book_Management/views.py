@@ -421,15 +421,12 @@ def book_overdue(request):
 # Fine calculation function:
 # calculate days late
 # store fine in model OR calculate dynamically
-@login_required
-@role_required(["Admin", "Librarian"])
-def calculate_days_late(request, book_name):
-    book = BorrowTransaction.objects.filter(
-        book_copy__book__title=book_name, status="borrowed"
-    ).last()
+def calculate_days_late(request, id):
+    book = BorrowTransaction.objects.filter(id=id, status="borrowed").first()
 
     if not book:
         messages.error(request, "No Borrow Record Found")
+        return redirect("book_overdue")   # ya jis page pe jana ho
 
     days_late = (datetime.date.today() - book.due_date).days
 
@@ -438,7 +435,6 @@ def calculate_days_late(request, book_name):
 
     fine = days_late * 10
 
-    # return fine,borrow status become returned,
     if request.method == "POST":
         fine_form = FineForm(request.POST)
         if fine_form.is_valid():
@@ -446,17 +442,17 @@ def calculate_days_late(request, book_name):
             f.amount = fine
             f.borrow_transaction = book
             f.save()
+
             book.status = "returned"
             book.returned_at = datetime.date.today()
             book.save()
-            messages.error(request, "Fine Paid Successfully")
-            return redirect(request.META.get("HTTP_REFERER", "staff/fine.html"))
+
+            messages.success(request, "Fine Paid Successfully")
+            return redirect("book_overdue")
     else:
         fine_form = FineForm(initial={"amount": fine})
-    return render(request, "staff/fine.html", {"fine_form": fine_form})
 
-
-
+    return render(request, "staff/fine.html", {"fine_form": fine_form, "book": book})
 
 # add new book
 @login_required
