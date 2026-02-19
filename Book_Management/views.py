@@ -241,10 +241,11 @@ def borrowing_book(request, book_name):
                         "error": "This member already has 3 books issued.",
                     },
                 )
-
             copy = BookCopy.objects.filter(
-                book__title=book_name, status="available"
+                book__title__icontains=book_name,
+                status="available"
             ).first()
+            
 
             if copy is None:
                 return render(
