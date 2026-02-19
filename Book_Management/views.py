@@ -242,9 +242,14 @@ def borrowing_book(request, book_name):
                     },
                 )
             copy = BookCopy.objects.filter(
-                book__title__iexact=book_name,
-                status__iexact="available"
+                book__title__icontains=book_name,
+                status="available"
             ).first()
+            
+            print("BOOK NAME:", repr(book_name))
+            print(BookCopy.objects.filter(book__title__iexact=book_name).count())
+            print(BookCopy.objects.filter(book__title__icontains=book_name).count())
+            print(BookCopy.objects.filter(book__title=book_name).count())
             
 
             if copy is None:
