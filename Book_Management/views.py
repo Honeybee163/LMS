@@ -242,8 +242,8 @@ def borrowing_book(request, book_name):
                     },
                 )
             copy = BookCopy.objects.filter(
-                book__title__icontains=book_name,
-                status="available"
+                book__title__iexact=book_name,
+                status__iexact="available"
             ).first()
             
 
