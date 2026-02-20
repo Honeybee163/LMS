@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,get_object_or_404
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
@@ -13,6 +13,7 @@ from .models import (
     Category,
     Author,
     FinePayment,
+    Book,
 )
 from .form import (
     UserForm,
@@ -25,6 +26,7 @@ from .form import (
     BookCopyForm,
 )
 import datetime
+from urllib.parse import unquote
 
 
 
@@ -213,7 +215,12 @@ def main(request):
 # borrow books by member
 @login_required
 @role_required(["Admin", "Librarian"])
-def borrowing_book(request, book_name):
+def borrowing_book(request, book_id):
+
+    # Get book object safely
+    book = get_object_or_404(Book, id=book_id)
+
+    # Member search
     members = MemberProfile.objects.filter(role="Member")
     name = request.GET.get("name", "")
     if name:
@@ -228,7 +235,8 @@ def borrowing_book(request, book_name):
 
             # Count currently borrowed books
             count_books = BorrowTransaction.objects.filter(
-                member=member_profile, status="borrowed"
+                member=member_profile,
+                status="borrowed"
             ).count()
 
             if count_books >= 3:
@@ -238,19 +246,16 @@ def borrowing_book(request, book_name):
                     {
                         "form": form,
                         "members": members,
+                        "book": book,
                         "error": "This member already has 3 books issued.",
                     },
                 )
+
+            # Get available copy
             copy = BookCopy.objects.filter(
-                book__title__icontains=book_name,
+                book=book,
                 status="available"
             ).first()
-            
-            print("BOOK NAME:", repr(book_name))
-            print(BookCopy.objects.filter(book__title__iexact=book_name).count())
-            print(BookCopy.objects.filter(book__title__icontains=book_name).count())
-            print(BookCopy.objects.filter(book__title=book_name).count())
-            
 
             if copy is None:
                 return render(
@@ -259,15 +264,18 @@ def borrowing_book(request, book_name):
                     {
                         "form": form,
                         "members": members,
+                        "book": book,
                         "error": "No available copy for this book.",
                     },
                 )
 
+            # Save transaction
             data.book_copy = copy
             data.due_date = datetime.date.today() + datetime.timedelta(days=15)
             data.status = "borrowed"
             data.save()
 
+            # Update copy status
             copy.status = "unavailable"
             copy.save()
 
@@ -279,9 +287,13 @@ def borrowing_book(request, book_name):
     return render(
         request,
         "staff/borrowing_book.html",
-        {"form": form, "members": members, "search_name": name},
+        {
+            "form": form,
+            "members": members,
+            "book": book,
+            "search_name": name,
+        },
     )
-
 
 
 
